@@ -21,10 +21,10 @@ class RegistrationController extends Controller{
         $this->emailSend = \Config\Services::email();
         date_default_timezone_set("Asia/Kolkata");
 
-        helper(['form']);    
+        helper(['form','url','date']);    
         
     }//end function __construct()
-    
+  
     /*
      * 
      */
@@ -227,7 +227,7 @@ class RegistrationController extends Controller{
             
             //check account activation code is exist in database & valid
             $userAccActCdData = $this->regModelObj->getUserActivationData($activationCd);
-            
+                        
             if($userAccActCdData)
             {                          
                 //check account is already activated
@@ -240,13 +240,34 @@ class RegistrationController extends Controller{
                {
                    //check account activation code is expired (60 min limit)
                    $userAccActTs = strtotime($userAccActCdData->activation_date_time);
-                   $currdttm = now();
-                   if()
+                   $currdttm = strtotime(date("Y-m-d H:i:s"));
+                   
+                   //echo "<br/>:".date("Y-m-d H:i:s").": ".$userAccActTs." :$userAccActCdData->activation_date_time: ".$currdttm."<br/> ".(int)($currdttm-$userAccActTs);
+                   //exit;
+                   if((int)($userAccActTs-$currdttm) > 3600)
                    {
+                       //60min over so activation code is expired
+                       $dataActivationMsg['error'] = "Account activation Code is expired";                  
                        
                    }//end if check 60min activation link status
                    else
                    {
+                       //all activation code passed so activate user account
+                       $userActivationProcessStatus = $this->regModelObj->activateUserRegistration($activationCd);
+                      
+                       if($userActivationProcessStatus)
+                       {
+                           //Activate account
+                           $dataActivationMsg['success'] = "User Account Activation Successful";                  
+                      
+            
+                           
+                       }//end if status check user activation process
+                       else
+                       {
+                            $dataActivationMsg['error'] = "Account activation process Failed";                  
+                      
+                       }//end else status check user activation process
                        
                    }//end else check 60min activation link status
                    
@@ -256,21 +277,13 @@ class RegistrationController extends Controller{
                     $dataActivationMsg['error'] = "User Account Status is Ambiguous ";
 
                }//end else check user is already active
-                
-                
-                
-                
-            
-                //Activate account
-            
-                
+                                                
             }
             else
             {
                 $dataActivationMsg['error'] = "Incorrect Activation Code";
             }
-             
-            
+                         
         }
         
         return view("acc_act_page.php",$dataActivationMsg);

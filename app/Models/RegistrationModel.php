@@ -45,22 +45,64 @@ class RegistrationModel extends Model{
         }//end if activation code check for exist
         else
         {
-            $selQrObj = $this->db->table('reg');
-            $selQrObj->select('unq_id','titlesel','firstname','emailid','activation_date_time');
-            $selQrObj->where(['activation_cd'=>$activationCd]);
-            $selQrObjResult = $selQrObj->get();
-            if($selQrObj->countAll()==1)
+           // echo $activationCd."<br/>";
+            $builder1 = $this->db->table('reg');                     
+            $builder1->select('id,unq_id,titlesel,firstname,emailid,activation_cd,usr_status,activation_date_time');
+            $builder1->where('activation_cd',$activationCd);            
+            $builder1ResultArr = $builder1->get()->getResultArray();
+            
+            $builder2 = $this->db->table('reg');                     
+            $builder2->select('id,unq_id,titlesel,firstname,emailid,activation_cd,usr_status,activation_date_time');
+            $builder2->where('activation_cd',$activationCd);            
+            $builder2Result = $builder2->get();
+            
+           // echo "<br/>Cnt : ".count($builder1ResultArr)."<br/>";
+           // echo "<br/>ReCnt :".$builder2->countAll()."<br/>";
+            if(count($builder1ResultArr)==1)
             {
-                return $selQrObjResult->getRow();
+                //echo "<br/>p1<br/>";
+                return ($builder2Result->getRow());
             }//end if check fetched rows
             else
             {   
+                //echo "p2<br/>";
                 return false;
             }//end else check fetched rows
             
         }//end else activation code check for exist
         
-    }//end funcation activateUser
+    }//end funcation getUserActivationData()
+    
+    
+    public function activateUserRegistration($activationCd){
+        
+        if(empty($activationCd))
+        {
+            echo "p1";
+            return false;
+            
+        }//end if $activationCd empty check
+        else
+        {
+            $updateQr = $this->db->table('reg');            
+            $updateQr->where('activation_cd',$activationCd);
+            $updateQr->update(['usr_status'=>'Active']);
+            if($this->db->affectedRows() == 1)
+            {
+                echo "p2";
+                return true;
+                
+            }//end if affected rows update query
+            else
+            {   
+                echo "p3";
+                return false;
+                
+            }//end else affected rows update query 
+            
+        }//end else for $activationCd empty check
+        
+    }//end function activateUserRegistration()
     
 }//end class RegistrationModel
 
