@@ -1,4 +1,8 @@
 <?php
+/*
+ * 
+ */
+
 $this->extend('layouts/base_inner_page.php');
 
 $this->section('pageTitleSection');

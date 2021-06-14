@@ -49,19 +49,13 @@ class RegistrationModel extends Model{
             $builder1 = $this->db->table('reg');                     
             $builder1->select('id,unq_id,titlesel,firstname,emailid,activation_cd,usr_status,activation_date_time');
             $builder1->where('activation_cd',$activationCd);            
-            $builder1ResultArr = $builder1->get()->getResultArray();
+            $builder1Result = $builder1->get();
+            $builder1ResultArr = $builder1Result->getResultArray();
             
-            $builder2 = $this->db->table('reg');                     
-            $builder2->select('id,unq_id,titlesel,firstname,emailid,activation_cd,usr_status,activation_date_time');
-            $builder2->where('activation_cd',$activationCd);            
-            $builder2Result = $builder2->get();
-            
-           // echo "<br/>Cnt : ".count($builder1ResultArr)."<br/>";
-           // echo "<br/>ReCnt :".$builder2->countAll()."<br/>";
             if(count($builder1ResultArr)==1)
             {
                 //echo "<br/>p1<br/>";
-                return ($builder2Result->getRow());
+                return ($builder1Result->getRow());
             }//end if check fetched rows
             else
             {   
@@ -78,7 +72,7 @@ class RegistrationModel extends Model{
         
         if(empty($activationCd))
         {
-            echo "p1";
+            //echo "p1";
             return false;
             
         }//end if $activationCd empty check
@@ -89,13 +83,13 @@ class RegistrationModel extends Model{
             $updateQr->update(['usr_status'=>'Active']);
             if($this->db->affectedRows() == 1)
             {
-                echo "p2";
+                //echo "p2";
                 return true;
                 
             }//end if affected rows update query
             else
             {   
-                echo "p3";
+                //echo "p3";
                 return false;
                 
             }//end else affected rows update query 
