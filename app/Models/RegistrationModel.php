@@ -97,7 +97,7 @@ class RegistrationModel extends Model{
         }//end else for $activationCd empty check
         
     }//end function activateUserRegistration()
-    
+     
 }//end class RegistrationModel
 
 ?>

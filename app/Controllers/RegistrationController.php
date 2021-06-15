@@ -133,7 +133,8 @@ class RegistrationController extends Controller{
                     'activation_date_time'=> date("Y-m-d H:i:s")                    
                     
                 ];    
-                
+                //print_r($userRegisterData);
+                //exit;
                 //model is called tostore data in database
                 $statusUserReg = $this->regModelObj->registerUser($userRegisterData);
                 if($statusUserReg==true)
